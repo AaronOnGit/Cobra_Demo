@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FormAuthenticationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="FormAuthenticationEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="UserRoles" EntityType="FormAuthenticationModel.UserRole" />
+    <EntitySet Name="Users" EntityType="FormAuthenticationModel.User" />
+    <AssociationSet Name="FK_UserRoles_Users" Association="FormAuthenticationModel.FK_UserRoles_Users">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
+    <EntitySet Name="Roles" EntityType="FormAuthenticationModel.Role" />
+    <AssociationSet Name="FK_UserRoles_Roles" Association="FormAuthenticationModel.FK_UserRoles_Roles">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="UserRole" EntitySet="UserRoles" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="UserRole">
+    <Key>
+      <PropertyRef Name="UserRoleId" />
+    </Key>
+    <Property Name="UserRoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="RoleId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="User" Relationship="FormAuthenticationModel.FK_UserRoles_Users" FromRole="UserRole" ToRole="User" />
+    <NavigationProperty Name="Role" Relationship="FormAuthenticationModel.FK_UserRoles_Roles" FromRole="UserRole" ToRole="Role" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="IsActivated" Type="Boolean" Nullable="false" />
+    <Property Name="CreateBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CreateOn" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UpdateOn" Type="DateTime" Precision="3" />
+    <Property Name="Version" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+    <Property Name="ContactId" Type="Int32" />
+    <Property Name="EncodeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="UserRoles" Relationship="FormAuthenticationModel.FK_UserRoles_Users" FromRole="User" ToRole="UserRole" />
+  </EntityType>
+  <Association Name="FK_UserRoles_Users">
+    <End Type="FormAuthenticationModel.User" Role="User" Multiplicity="1" />
+    <End Type="FormAuthenticationModel.UserRole" Role="UserRole" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserRole">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="RoleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CreateBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CreateOn" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UpdateOn" Type="DateTime" Precision="3" />
+    <Property Name="Version" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+    <NavigationProperty Name="UserRoles" Relationship="FormAuthenticationModel.FK_UserRoles_Roles" FromRole="Role" ToRole="UserRole" />
+  </EntityType>
+  <Association Name="FK_UserRoles_Roles">
+    <End Type="FormAuthenticationModel.Role" Role="Role" Multiplicity="1" />
+    <End Type="FormAuthenticationModel.UserRole" Role="UserRole" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserRole">
+        <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
