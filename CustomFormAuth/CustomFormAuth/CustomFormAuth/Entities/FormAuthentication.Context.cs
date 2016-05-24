@@ -20,13 +20,9 @@ namespace CustomFormAuth.Entities
         {
         }
     
-        ////protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        ////{
-        ////    throw new UnintentionalCodeFirstException();
-        ////}
-    
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Token> Tokens { get; set; }
     }
 }

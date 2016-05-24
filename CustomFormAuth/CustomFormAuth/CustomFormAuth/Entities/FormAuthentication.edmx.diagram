@@ -5,11 +5,13 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="9b06fc035f4b452c92751c44b026678c" Name="Diagram1">
-        <EntityTypeShape EntityType="FormAuthenticationModel.UserRole" Width="1.5" PointX="3.25" PointY="1.125" />
-        <EntityTypeShape EntityType="FormAuthenticationModel.User" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="FormAuthenticationModel.UserRole" PointX="5.75" PointY="1.75" Width="1.5" />
+        <EntityTypeShape EntityType="FormAuthenticationModel.User" PointX="3.125" PointY="1.75" Width="1.5" />
         <AssociationConnector Association="FormAuthenticationModel.FK_UserRoles_Users" />
-        <EntityTypeShape EntityType="FormAuthenticationModel.Role" Width="1.5" PointX="3.375" PointY="5" />
+        <EntityTypeShape EntityType="FormAuthenticationModel.Role" PointX="8.25" PointY="1.75" Width="1.5" />
         <AssociationConnector Association="FormAuthenticationModel.FK_UserRoles_Roles" />
+        <EntityTypeShape EntityType="FormAuthenticationModel.Token" Width="1.5" PointX="0.875" PointY="1.75" />
+        <AssociationConnector Association="FormAuthenticationModel.FK_Token_Users" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

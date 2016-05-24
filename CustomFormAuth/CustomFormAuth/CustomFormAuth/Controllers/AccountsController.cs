@@ -82,19 +82,38 @@ namespace CustomFormAuth.Controllers
                 if (isValidUser)
                 {
                     //FormsAuthentication.SetAuthCookie(model.UserName, model.Remember);
-                    User user = null;
                     using (var db = new FormAuthenticationEntities())
                     {
-                        user = db.Users.Where(u => u.UserName == model.UserName).SingleOrDefault();
+                        User user = db.Users.Where(u => u.UserName == model.UserName).FirstOrDefault();
 
                         if (user != null)
                         {
-                            JavaScriptSerializer js = new JavaScriptSerializer();
-                            string data = js.Serialize(user);
-                            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, user.UserName, DateTime.Now, DateTime.Now.AddMinutes(30), model.Remember, data);
-                            string encToken = FormsAuthentication.Encrypt(ticket);
-                            HttpCookie authoCookies = new HttpCookie(FormsAuthentication.FormsCookieName, encToken);
-                            Response.Cookies.Add(authoCookies);
+                            try
+                            {
+                                var obj = new User
+                                {
+                                    Id = user.Id,
+                                    FirstName = user.FirstName,
+                                    LastName = user.LastName,
+                                    UserName = user.UserName,
+                                    Email = user.Email,
+                                    Password = user.Password,
+                                    EncodeKey = user.EncodeKey,
+                                    CreateBy = "user",
+                                    CreateOn = DateTime.Now.AddYears(-3)
+
+                                };
+                                JavaScriptSerializer js = new JavaScriptSerializer();
+                                string data = js.Serialize(obj);
+                                FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, user.UserName, DateTime.Now, DateTime.Now.AddMinutes(30), model.Remember, data);
+                                string encToken = FormsAuthentication.Encrypt(ticket);
+                                HttpCookie authoCookies = new HttpCookie(FormsAuthentication.FormsCookieName, encToken);
+                                Response.Cookies.Add(authoCookies);
+                            }
+                            catch (Exception ex)
+                            {
+                              var msg =  ex.Message;
+                            }
                         }
                         if (Url.IsLocalUrl(returnUrl))
                         {

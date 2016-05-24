@@ -18,6 +18,7 @@ namespace CustomFormAuth.Entities
         public User()
         {
             this.UserRoles = new HashSet<UserRole>();
+            this.Tokens = new HashSet<Token>();
         }
     
         public int Id { get; set; }
@@ -38,5 +39,7 @@ namespace CustomFormAuth.Entities
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserRole> UserRoles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Token> Tokens { get; set; }
     }
 }

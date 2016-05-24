@@ -17,6 +17,16 @@
           <Property Name="UpdateOn" Type="datetime" />
           <Property Name="Version" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
         </EntityType>
+        <EntityType Name="Token">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Token" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateIssue" Type="datetime" Nullable="false" />
+          <Property Name="DateExpire" Type="datetime" Nullable="false" />
+          <Property Name="UserId" Type="int" />
+        </EntityType>
         <EntityType Name="UserRoles">
           <Key>
             <PropertyRef Name="UserRoleId" />
@@ -45,6 +55,18 @@
           <Property Name="ContactId" Type="int" />
           <Property Name="EncodeKey" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <Association Name="FK_Token_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Token" Type="Self.Token" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Token">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserRoles_Roles">
           <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
           <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
@@ -71,8 +93,13 @@
         </Association>
         <EntityContainer Name="FormAuthenticationModelStoreContainer">
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Token" EntityType="Self.Token" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Token_Users" Association="Self.FK_Token_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Token" EntitySet="Token" />
+          </AssociationSet>
           <AssociationSet Name="FK_UserRoles_Roles" Association="Self.FK_UserRoles_Roles">
             <End Role="Roles" EntitySet="Roles" />
             <End Role="UserRoles" EntitySet="UserRoles" />
@@ -90,22 +117,27 @@
           <EntitySet Name="UserRoles" EntityType="FormAuthenticationModel.UserRole" />
           <EntitySet Name="Users" EntityType="FormAuthenticationModel.User" />
           <AssociationSet Name="FK_UserRoles_Users" Association="FormAuthenticationModel.FK_UserRoles_Users">
-            <End Role="User" EntitySet="Users" />
-            <End Role="UserRole" EntitySet="UserRoles" />
+            <End EntitySet="Users" Role="User" />
+            <End EntitySet="UserRoles" Role="UserRole" />
           </AssociationSet>
           <EntitySet Name="Roles" EntityType="FormAuthenticationModel.Role" />
           <AssociationSet Name="FK_UserRoles_Roles" Association="FormAuthenticationModel.FK_UserRoles_Roles">
-            <End Role="Role" EntitySet="Roles" />
-            <End Role="UserRole" EntitySet="UserRoles" />
+            <End EntitySet="Roles" Role="Role" />
+            <End EntitySet="UserRoles" Role="UserRole" />
+          </AssociationSet>
+          <EntitySet Name="Tokens" EntityType="FormAuthenticationModel.Token" />
+          <AssociationSet Name="FK_Token_Users" Association="FormAuthenticationModel.FK_Token_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Token" EntitySet="Tokens" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="UserRole">
           <Key>
             <PropertyRef Name="UserRoleId" />
           </Key>
-          <Property Name="UserRoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="RoleId" Type="Int32" Nullable="false" />
+          <Property Name="UserRoleId" Nullable="false" annotation:StoreGeneratedPattern="Identity" Type="Int32" />
+          <Property Name="UserId" Nullable="false" Type="Int32" />
+          <Property Name="RoleId" Nullable="false" Type="Int32" />
           <NavigationProperty Name="User" Relationship="FormAuthenticationModel.FK_UserRoles_Users" FromRole="UserRole" ToRole="User" />
           <NavigationProperty Name="Role" Relationship="FormAuthenticationModel.FK_UserRoles_Roles" FromRole="UserRole" ToRole="Role" />
         </EntityType>
@@ -129,10 +161,11 @@
           <Property Name="ContactId" Type="Int32" />
           <Property Name="EncodeKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="UserRoles" Relationship="FormAuthenticationModel.FK_UserRoles_Users" FromRole="User" ToRole="UserRole" />
+          <NavigationProperty Name="Tokens" Relationship="FormAuthenticationModel.FK_Token_Users" FromRole="User" ToRole="Token" />
         </EntityType>
         <Association Name="FK_UserRoles_Users">
-          <End Type="FormAuthenticationModel.User" Role="User" Multiplicity="1" />
-          <End Type="FormAuthenticationModel.UserRole" Role="UserRole" Multiplicity="*" />
+          <End Type="FormAuthenticationModel.User" Multiplicity="1" Role="User" />
+          <End Type="FormAuthenticationModel.UserRole" Multiplicity="*" Role="UserRole" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="Id" />
@@ -146,24 +179,47 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="RoleName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreateBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreateOn" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="UpdateBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UpdateOn" Type="DateTime" Precision="3" />
-          <Property Name="Version" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Id" Nullable="false" Type="Int32" />
+          <Property Name="RoleName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="CreateBy" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="CreateOn" Nullable="false" Precision="3" Type="DateTime" />
+          <Property Name="UpdateBy" MaxLength="50" FixedLength="false" Unicode="true" Type="String" />
+          <Property Name="UpdateOn" Precision="3" Type="DateTime" />
+          <Property Name="Version" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" Type="Binary" />
           <NavigationProperty Name="UserRoles" Relationship="FormAuthenticationModel.FK_UserRoles_Roles" FromRole="Role" ToRole="UserRole" />
         </EntityType>
         <Association Name="FK_UserRoles_Roles">
-          <End Type="FormAuthenticationModel.Role" Role="Role" Multiplicity="1" />
-          <End Type="FormAuthenticationModel.UserRole" Role="UserRole" Multiplicity="*" />
+          <End Type="FormAuthenticationModel.Role" Multiplicity="1" Role="Role" />
+          <End Type="FormAuthenticationModel.UserRole" Multiplicity="*" Role="UserRole" />
           <ReferentialConstraint>
             <Principal Role="Role">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="UserRole">
               <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Token">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Token1" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateIssue" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateExpire" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UserId" Type="Int32" />
+          <NavigationProperty Name="User" Relationship="FormAuthenticationModel.FK_Token_Users" FromRole="Token" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Token_Users">
+          <End Type="FormAuthenticationModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="FormAuthenticationModel.Token" Role="Token" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Token">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -212,6 +268,17 @@
                 <ScalarProperty Name="CreateOn" ColumnName="CreateOn" />
                 <ScalarProperty Name="CreateBy" ColumnName="CreateBy" />
                 <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tokens">
+            <EntityTypeMapping TypeName="FormAuthenticationModel.Token">
+              <MappingFragment StoreEntitySet="Token">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DateExpire" ColumnName="DateExpire" />
+                <ScalarProperty Name="DateIssue" ColumnName="DateIssue" />
+                <ScalarProperty Name="Token1" ColumnName="Token" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

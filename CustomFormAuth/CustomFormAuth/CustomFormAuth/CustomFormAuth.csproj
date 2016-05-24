@@ -173,6 +173,9 @@
     <Compile Include="Entities\Role.cs">
       <DependentUpon>FormAuthentication.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Token.cs">
+      <DependentUpon>FormAuthentication.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\UserRole.cs">
       <DependentUpon>FormAuthentication.tt</DependentUpon>
     </Compile>

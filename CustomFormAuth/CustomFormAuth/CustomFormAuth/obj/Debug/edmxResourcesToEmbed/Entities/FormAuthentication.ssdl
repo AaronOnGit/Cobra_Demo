@@ -12,6 +12,16 @@
     <Property Name="UpdateOn" Type="datetime" />
     <Property Name="Version" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
   </EntityType>
+  <EntityType Name="Token">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Token" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="DateIssue" Type="datetime" Nullable="false" />
+    <Property Name="DateExpire" Type="datetime" Nullable="false" />
+    <Property Name="UserId" Type="int" />
+  </EntityType>
   <EntityType Name="UserRoles">
     <Key>
       <PropertyRef Name="UserRoleId" />
@@ -40,6 +50,18 @@
     <Property Name="ContactId" Type="int" />
     <Property Name="EncodeKey" Type="nvarchar" MaxLength="50" />
   </EntityType>
+  <Association Name="FK_Token_Users">
+    <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+    <End Role="Token" Type="Self.Token" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Users">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Token">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_UserRoles_Roles">
     <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
     <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
@@ -66,8 +88,13 @@
   </Association>
   <EntityContainer Name="FormAuthenticationModelStoreContainer">
     <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Token" EntityType="Self.Token" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Token_Users" Association="Self.FK_Token_Users">
+      <End Role="Users" EntitySet="Users" />
+      <End Role="Token" EntitySet="Token" />
+    </AssociationSet>
     <AssociationSet Name="FK_UserRoles_Roles" Association="Self.FK_UserRoles_Roles">
       <End Role="Roles" EntitySet="Roles" />
       <End Role="UserRoles" EntitySet="UserRoles" />
