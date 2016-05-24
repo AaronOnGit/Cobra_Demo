@@ -7,6 +7,3 @@ Stored insensitive code, that is for the demo purpose.
 insert aaaaa
 
 Add 2
-
-
-add 3
